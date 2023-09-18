@@ -79,70 +79,19 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final emailField = TextEditingController(text: '');
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: TextField(
-                  maxLines: 1, //or null
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  controller: emailField,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (!isEmail(emailField.text)) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please enter a valid email.")));
-                        return;
-                      }
-                      await supabase.auth.signInWithOtp(
-                        email: emailField.text,
-                      ).then((value) => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please enter a valid email."))));
-
-                      Future(() => {
-                        if (supabase.auth.currentSession != null) {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MyHomePage()))
-                        }
-                      });
-                    },
-                    child: const Text('Email Login Link'),
-                    
-                  ),
-                  const SizedBox(width: 20.0),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await supabase.auth.signInWithOAuth(Provider.google);
-                      Future(() => {
-                        if (supabase.auth.currentSession != null) {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MyHomePage()))
-                        }
-                      });
-                    },
-                    child: const Row(
-                      children: [
-                        // Icon(Icons.login),
-                        // SizedBox(width: 10.0),
-                        Text('Google Login'),
-                      ],
-                  ))
-                ]
-              ),
-            ],
-          ),
-        ),
+    return Center(
+      child: ElevatedButton(
+        onPressed: () async {
+          await supabase.auth.signInWithOAuth(Provider.google);
+          Future(() => {
+            if (supabase.auth.currentSession != null) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MyHomePage()))
+            }
+          });
+        },
+        child: const Text('Sign in with Google'),
       ),
     );
   }
@@ -216,8 +165,4 @@ class _NoteListState extends State<NoteList> {
       },
     );
   }
-}
-
-bool isEmail(email) {
-  return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
 }
