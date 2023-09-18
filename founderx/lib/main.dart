@@ -45,9 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (s == null) {
-      return const Login();
-    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -55,15 +52,18 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             onPressed: () async {
-              await supabase.auth.signOut();
-              Future(() => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Login())));
+              if (s == null) {
+                await supabase.auth.signInWithOAuth(Provider.google);
+              } else {
+                await supabase.auth.signOut();
+              }
             },
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.person),
           )
         ],
       ),
       body: const NoteList(),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: s == null ? null : FloatingActionButton(
         onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const NewPost())),
         child: const Icon(Icons.edit),
       ),
