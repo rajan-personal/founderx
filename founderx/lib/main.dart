@@ -129,7 +129,7 @@ class _NoteListState extends State<NoteList> {
     await supabase.from('founderx_profiles').select('*').then((value) => {
       setState(() {
         value.forEach((element) {
-          profiles[element['id']] = element['email'];
+          profiles[element['id']] = element['email'].split('@')[0];
         });
       })
     });
